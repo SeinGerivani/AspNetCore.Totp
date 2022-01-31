@@ -27,28 +27,28 @@ namespace AspNetCore.Totp
             accountIdentity = accountIdentity.Replace(" ", "");
             var encodedSecretKey = Base32.Encode(accountSecretKey);
             var provisionUrl = UrlEncoder.Encode($"otpauth://totp/{accountIdentity}?secret={encodedSecretKey}&issuer={UrlEncoder.Encode(issuer)}");
-            var protocol = useHttps ? "https" : "http";
-            var url = $"{protocol}://chart.googleapis.com/chart?cht=qr&chs={qrCodeWidth}x{qrCodeHeight}&chl={provisionUrl}";
+            //var protocol = useHttps ? "https" : "http";
+            //var url = $"{protocol}://chart.googleapis.com/chart?cht=qr&chs={qrCodeWidth}x{qrCodeHeight}&chl={provisionUrl}";
 
-            return new TotpSetup(encodedSecretKey, GetQrImage(url));
+            return new TotpSetup(encodedSecretKey, provisionUrl);
         }
 
-        private static byte[] GetQrImage(string url, int timeoutInSeconds = 30)
-        {
-            try
-            {
-                var client = new HttpClient { Timeout = TimeSpan.FromSeconds(timeoutInSeconds) };
-                var res = client.GetAsync(url).Result;
+        //private static byte[] GetQrImage(string url, int timeoutInSeconds = 30)
+        //{
+        //    try
+        //    {
+        //        var client = new HttpClient { Timeout = TimeSpan.FromSeconds(timeoutInSeconds) };
+        //        var res = client.GetAsync(url).Result;
 
-                if (res.StatusCode != System.Net.HttpStatusCode.OK)
-                    throw new Exception("Unexpected result from the Google QR web site.");
+        //        if (res.StatusCode != System.Net.HttpStatusCode.OK)
+        //            throw new Exception("Unexpected result from the Google QR web site.");
                 
-                return res.Content.ReadAsByteArrayAsync().Result;
-            }
-            catch (Exception exception)
-            {
-                throw new HttpRequestException("Unexpected result from the Google QR web site.", exception);
-            }
-        }
+        //        return res.Content.ReadAsByteArrayAsync().Result;
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        throw new HttpRequestException("Unexpected result from the Google QR web site.", exception);
+        //    }
+        //}
     }
 }
